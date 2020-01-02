@@ -4,7 +4,7 @@
   "description": "GitHub action to setup the bazel build tool",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "bazel",
@@ -12,5 +12,11 @@
     "setup"
   ],
   "author": "John Lawson",
-  "license": "BSD-3-Clause"
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "@actions/core": "^1.2.0",
+    "@actions/github": "^2.0.0",
+    "@actions/tool-cache": "^1.1.2",
+    "jest": "^24.9.0"
+  }
 }
