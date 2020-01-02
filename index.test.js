@@ -12,11 +12,9 @@ const setup = require('./setup-bazel.js');
 const core = require('@actions/core');
 
 test('setup downloads bazel', async () => {
-  const url = setup.getURL('2.0.0')
-  await setup.addBazelToPath(url)
+  await setup.addBazelToPath('1.2.1')
   // As the PATH is modified, have to explicitly set the env for the call to exec
   const {stdout, stderr} = await exec('bazel --version', {'env': process.env})
 
-  expect(stdout).toMatch(/bazel/)
-  expect(stdout).toMatch(/1.2.1/)
+  expect(stdout).toMatch(/bazel 1.2.1/)
 });
