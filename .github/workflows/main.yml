@@ -1,0 +1,16 @@
+on: [push]
+
+jobs:
+  setup_bazel_test:
+    runs-on: ubuntu-latest
+    name: Test setup bazel action
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup bazel
+      uses: ./
+      id: setup
+      with:
+        bazel-version: '2.0.0'
+    - name: Run bazel --version
+      run: bazel --version

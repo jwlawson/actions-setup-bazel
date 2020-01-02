@@ -1,0 +1,9 @@
+name: 'actions-setup-bazel'
+description: 'Setup the bazel build tool'
+inputs:
+  bazel-version:
+    description: 'The version of bazel to setup. E.g. 2.0.0'
+    default: '2.0'
+runs:
+  using: 'node12'
+  main: 'index.js'
