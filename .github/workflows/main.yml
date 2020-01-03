@@ -24,5 +24,10 @@ jobs:
     - name: Install
       run: npm install
 
+    - name: Format
+      run: |
+        npm run format
+        git diff --quiet
+
     - name: Run tests
       run: npm test
