@@ -1,33 +1,33 @@
-const tc = require("@actions/tool-cache");
-const core = require("@actions/core");
-const fs = require("fs");
+const tc = require('@actions/tool-cache');
+const core = require('@actions/core');
+const fs = require('fs');
 
-const IS_WINDOWS = process.platform === "win32";
+const IS_WINDOWS = process.platform === 'win32';
 
-const PACKAGE_NAME = "bazel";
+const PACKAGE_NAME = 'bazel';
 
 function getURL(version) {
   const version_regex = /VERSION/gi;
   const platform_regex = /PLATFORM/gi;
   const template_url =
-    "https://github.com/bazelbuild/bazel/releases/download/VERSION/bazel-VERSION-PLATFORM";
+    'https://github.com/bazelbuild/bazel/releases/download/VERSION/bazel-VERSION-PLATFORM';
 
   if (IS_WINDOWS) {
     return template_url
       .replace(version_regex, version)
-      .replace(platform_regex, "windows-x86_64.exe");
+      .replace(platform_regex, 'windows-x86_64.exe');
   } else {
     return template_url
       .replace(version_regex, version)
-      .replace(platform_regex, "linux-x86_64");
+      .replace(platform_regex, 'linux-x86_64');
   }
 }
 
 function getFileName() {
   if (IS_WINDOWS) {
-    return "bazel.exe";
+    return 'bazel.exe';
   } else {
-    return "bazel";
+    return 'bazel';
   }
 }
 

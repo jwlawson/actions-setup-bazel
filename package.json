@@ -4,7 +4,7 @@
   "description": "GitHub action to setup the bazel build tool",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write **/*.js",
+    "format": "prettier --write **/*.js *.js",
     "test": "jest"
   },
   "keywords": [
@@ -23,7 +23,9 @@
     "@actions/io": "^1.0.1",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
-    "prettier": "^1.19.1"
+    "nock": "^11.7.1",
+    "prettier": "^1.19.1",
+    "request": "^2.88.0"
   },
   "jest": {
     "testEnvironment": "node"
@@ -33,5 +35,11 @@
     "hooks": {
       "pre-push": "npm prune --production && git add -f node_modules/* && git commit -m \"[Husky] Fix node modules\""
     }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false
   }
 }
