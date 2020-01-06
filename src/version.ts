@@ -28,9 +28,9 @@ export async function getAllVersionInfo(): Promise<Version[]> {
 
 export async function getLatestVersion(
   version_list: Version[]
-): Promise<string> {
-  let sorted_versions: string[] = version_list
-    .map(v => v.name)
-    .sort(semver.rcompare);
+): Promise<Version> {
+  let sorted_versions: Version[] = version_list
+    .filter((v) => !v.draft && !v.prerelease)
+    .sort((a, b) => semver.rcompare(a.name, b.name));
   return sorted_versions[0];
 }
