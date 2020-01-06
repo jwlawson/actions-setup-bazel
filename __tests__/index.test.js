@@ -8,7 +8,7 @@ const tempPath = path.join(__dirname, 'TEMP');
 process.env['RUNNER_TEMP'] = tempPath;
 process.env['RUNNER_TOOL_CACHE'] = cachePath;
 
-const setup = require('../setup-bazel.js');
+const setup = require('../lib/setup-bazel.js');
 
 test('setup downloads bazel', async () => {
   await setup.addBazelToPath('1.2.1');

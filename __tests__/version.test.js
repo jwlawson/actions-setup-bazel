@@ -2,12 +2,11 @@ const path = require('path');
 const nock = require('nock');
 const dataPath = path.join(__dirname, 'data');
 
-const version = require('../version.js');
+const version = require('../lib/version.js');
 
 describe('When a version is specified', () => {
   beforeEach(() => {
     nock('https://api.github.com')
-      .log(console.log)
       .get('/repos/bazelbuild/bazel/releases')
       .replyWithFile(200, path.join(dataPath, 'releases.json'), {
         'Content-Type': 'application/json'
@@ -18,8 +17,9 @@ describe('When a version is specified', () => {
     nock.enableNetConnect();
   });
   it('download dummy file', async done => {
-    const resp = await version.getAllVersions();
-    console.log(resp);
+    const version_info = await version.getAllVersionInfo();
+    const latest = await version.getLatestVersion(version_info);
+    expect(latest).toMatch(/2.0.0/)
     done();
   });
 });
