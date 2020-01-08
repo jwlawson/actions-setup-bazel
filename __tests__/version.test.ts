@@ -2,7 +2,7 @@ const path = require('path');
 const nock = require('nock');
 const dataPath = path.join(__dirname, 'data');
 
-const version = require('../lib/version.js');
+import * as version from '../src/version';
 
 describe('When a version is needed', () => {
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
-import * as setup from './setup-bazel.ts';
-import * as version from './version.ts';
+import * as setup from './setup-bazel';
+import * as version from './version';
 
 async function run() {
   try {

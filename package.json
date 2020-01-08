@@ -4,7 +4,6 @@
   "description": "GitHub action to setup the bazel build tool",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
     "package": "ncc build src/index.ts -m -o dist",
     "format": "prettier --write **/*.ts __tests__/**/*.js",
     "prepare": "npm run format && npm run package",
@@ -26,16 +25,24 @@
   "devDependencies": {
     "@actions/github": "^2.0.0",
     "@actions/io": "^1.0.1",
+    "@types/jest": "^24.0.25",
     "@types/semver": "^6.2.0",
     "@zeit/ncc": "^0.21.0",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
     "nock": "^10.0.6",
     "prettier": "^1.19.1",
+    "ts-jest": "^24.3.0",
     "typescript": "^3.7.4"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/*.test.ts"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    }
   },
   "husky": {
     "skipCI": true,
