@@ -26,11 +26,22 @@ export async function getAllVersionInfo(): Promise<Version[]> {
   return versions;
 }
 
-export async function getLatestVersion(
+async function getLatest(version_list: Version[]): Promise<Version> {
+  const sorted_versions: Version[] = version_list.sort((a, b) =>
+    semver.rcompare(a.name, b.name)
+  );
+  return sorted_versions[0];
+}
+
+export async function getLatestMatching(
+  version: string,
   version_list: Version[]
 ): Promise<Version> {
-  let sorted_versions: Version[] = version_list
+  let matching_versions = version_list
     .filter((v) => !v.draft && !v.prerelease)
-    .sort((a, b) => semver.rcompare(a.name, b.name));
-  return sorted_versions[0];
+    .filter((v) => semver.satisfies(v.name, version));
+  if (matching_versions.length == 0) {
+    throw new Error('Unable to find version matching ' + version);
+  }
+  return getLatest(matching_versions);
 }

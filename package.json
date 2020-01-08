@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "format": "prettier --write **/*.ts *.ts",
+    "format": "prettier --write **/*.ts __tests__/**/*.js",
     "test": "jest"
   },
   "keywords": [
