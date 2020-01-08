@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "package": "ncc build lib/index.js -m -o dist",
+    "package": "ncc build src/index.ts -m -o dist",
     "format": "prettier --write **/*.ts __tests__/**/*.js",
-    "all": "npm run format && npm run build && npm run package",
+    "prepare": "npm run format && npm run package",
     "test": "jest"
   },
   "keywords": [
@@ -40,7 +40,7 @@
   "husky": {
     "skipCI": true,
     "hooks": {
-      "pre-commit": "npm run all && git add dist/"
+      "pre-commit": "npm run prepare && git add dist/"
     }
   },
   "prettier": {
