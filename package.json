@@ -39,6 +39,7 @@
   "husky": {
     "skipCI": true,
     "hooks": {
+      "pre-commit": "npm run format && npm run build",
       "pre-push": "npm prune --production && git add -f node_modules/* && git commit -m \"[Husky] Fix node modules\""
     }
   },

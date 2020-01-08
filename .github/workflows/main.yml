@@ -1,9 +1,9 @@
 on: [push]
 
 jobs:
-  setup_bazel_test:
+  action_tests:
     runs-on: ${{ matrix.os }}
-    name: Test
+    name: Action Test
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -20,6 +20,17 @@ jobs:
 
     - name: Run bazel --version
       run: bazel --version
+
+  unit_tests:
+    runs-on: ${{ matrix.os }}
+    name: Unit Test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
 
     - name: Install
       run: npm install
