@@ -10,7 +10,7 @@ async function run() {
       required_version,
       all_version_info
     );
-    await setup.addBazelToPath(bazel_version_info.name);
+    await setup.addBazelToPath(bazel_version_info);
   } catch (error) {
     core.setFailed(error.message);
   }

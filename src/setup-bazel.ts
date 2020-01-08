@@ -1,12 +1,13 @@
 import * as tc from '@actions/tool-cache';
 import * as core from '@actions/core';
 import * as fs from 'fs';
+import * as vi from './version-info';
 
 const IS_WINDOWS: boolean = process.platform === 'win32';
 
 const PACKAGE_NAME: string = 'bazel';
 
-function getURL(version: string) {
+function getURL(version: string): string {
   const version_regex = /VERSION/gi;
   const platform_regex = /PLATFORM/gi;
   const template_url =
@@ -23,7 +24,7 @@ function getURL(version: string) {
   }
 }
 
-function getFileName() {
+function getFileName(): string {
   if (IS_WINDOWS) {
     return 'bazel.exe';
   } else {
@@ -31,7 +32,7 @@ function getFileName() {
   }
 }
 
-async function addBazelToToolCache(version: string) {
+async function addBazelToToolCache(version: string): Promise<string> {
   const binary = await tc.downloadTool(getURL(version));
   if (!IS_WINDOWS) {
     // The downloaded bazel file is not executable by default
@@ -40,10 +41,10 @@ async function addBazelToToolCache(version: string) {
   return await tc.cacheFile(binary, getFileName(), PACKAGE_NAME, version);
 }
 
-export async function addBazelToPath(version: string) {
-  let tool = tc.find(PACKAGE_NAME, version);
+export async function addBazelToPath(version: vi.VersionInfo): Promise<void> {
+  let tool: string = tc.find(PACKAGE_NAME, version.name);
   if (!tool) {
-    tool = await addBazelToToolCache(version);
+    tool = await addBazelToToolCache(version.name);
   }
   await core.addPath(tool);
 }
