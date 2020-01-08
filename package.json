@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "package": "ncc build lib/index.js -m -o dist",
     "format": "prettier --write **/*.ts __tests__/**/*.js",
+    "all": "npm run format && npm run build && npm run package",
     "test": "jest"
   },
   "keywords": [
@@ -25,6 +27,7 @@
     "@actions/github": "^2.0.0",
     "@actions/io": "^1.0.1",
     "@types/semver": "^6.2.0",
+    "@zeit/ncc": "^0.21.0",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
     "nock": "^10.0.6",
@@ -37,8 +40,7 @@
   "husky": {
     "skipCI": true,
     "hooks": {
-      "pre-commit": "npm run format && npm run build",
-      "pre-push": "npm prune --production && git add -f node_modules/* && git commit -m \"[Husky] Fix node modules\""
+      "pre-commit": "npm run all && git add dist/"
     }
   },
   "prettier": {
