@@ -39,6 +39,10 @@ function extractFileTypeFrom(filename: string): string {
   if (KNOWN_EXTENSIONS.includes(ext)) {
     return ext;
   } else {
+    if (filename.endsWith('x86_64')) {
+      // Special case for unix executables
+      return 'exe';
+    }
     return '';
   }
 }
