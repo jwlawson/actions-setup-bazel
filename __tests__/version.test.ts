@@ -54,3 +54,38 @@ describe('When a version is needed', () => {
     ).rejects.toThrow('Unable to find version matching 10.0');
   });
 });
+
+describe('When api token is required', () => {
+  beforeEach(() => {
+    nock('https://api.github.com', {
+      reqheaders: {
+        Authorization: 'token secret_token'
+      }
+    })
+      .get('/repos/bazelbuild/bazel/releases')
+      .replyWithFile(200, path.join(dataPath, 'releases.json'), {
+        'Content-Type': 'application/json'
+      });
+    nock('https://api.github.com')
+      .get('/repos/bazelbuild/bazel/releases')
+      .replyWithError('Invalid API token');
+  });
+  afterEach(() => {
+    nock.cleanAll();
+    nock.enableNetConnect();
+  });
+  it('includes api token in request', async () => {
+    const version_info = await version.getAllVersionInfo('secret_token');
+    expect(version_info).toEqual(expect.arrayContaining([expect.anything()]));
+  });
+  it('passing empty token gives error', async () => {
+    await expect(version.getAllVersionInfo('')).rejects.toThrow(
+      'Invalid API token'
+    );
+  });
+  it('not passing token gives error', async () => {
+    await expect(version.getAllVersionInfo()).rejects.toThrow(
+      'Invalid API token'
+    );
+  });
+});

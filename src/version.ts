@@ -70,9 +70,23 @@ function convertToVersionInfo(versions: GitHubVersion[]): vi.VersionInfo[] {
   return result;
 }
 
-export async function getAllVersionInfo(): Promise<vi.VersionInfo[]> {
+function getHttpOptions(api_token: string): rest.IRequestOptions {
+  if (api_token) {
+    return { additionalHeaders: { Authorization: 'token ' + api_token } };
+  } else {
+    return {};
+  }
+}
+
+export async function getAllVersionInfo(
+  api_token: string = ''
+): Promise<vi.VersionInfo[]> {
   const client: rest.RestClient = new rest.RestClient(USER_AGENT);
-  const version_response = await client.get<GitHubVersion[]>(VERSION_URL);
+  const options = getHttpOptions(api_token);
+  const version_response = await client.get<GitHubVersion[]>(
+    VERSION_URL,
+    options
+  );
   const raw_versions: GitHubVersion[] = version_response.result || [];
   const versions: vi.VersionInfo[] = convertToVersionInfo(raw_versions);
   return versions;

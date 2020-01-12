@@ -17,6 +17,7 @@ jobs:
       id: setup
       with:
         bazel-version: '2.0.0'
+        github-api-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Run bazel --version
       run: |
