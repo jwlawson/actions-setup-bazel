@@ -20,6 +20,7 @@ jobs:
         github-api-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Run bazel --version
+      shell: bash
       run: |
         VERSION=`bazel --version`
         echo $VERSION
