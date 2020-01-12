@@ -15,7 +15,7 @@
     "setup"
   ],
   "author": "John Lawson",
-  "license": "BSD-3-Clause",
+  "license": "BSD-3-Clause-Clear",
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/tool-cache": "^1.1.2",
