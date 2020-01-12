@@ -1,6 +1,6 @@
 # Setup bazel for GitHub Actions
 
-Github action to setup the bazel build tool.
+GitHub action to setup the bazel build tool.
 
 This action will update the path for your workflow to include a bazel
 executable matching the platform and any version requirements.
@@ -57,5 +57,4 @@ used, and provided on the path for subsequent workflow steps.
 [version tests]: ./__tests__/version.test.ts
 [GitHub API rate limiting]: https://developer.github.com/v3/#rate-limiting
 [GITHUB_TOKEN]: https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret
-
 

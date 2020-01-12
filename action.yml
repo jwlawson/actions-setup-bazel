@@ -4,6 +4,9 @@ inputs:
   bazel-version:
     description: 'The version of bazel to setup. E.g. 2.0.0'
     default: '2.0'
+  github-api-token:
+    description: 'Authentication token to use when connecting to the GitHub API'
+    default: ''
 runs:
   using: 'node12'
   main: 'dist/index.js'
