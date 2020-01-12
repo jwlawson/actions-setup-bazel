@@ -19,14 +19,17 @@ jobs:
         bazel-version: '2.0.0'
 
     - name: Run bazel --version
-      run: bazel --version
+      run: |
+        VERSION=`bazel --version`
+        echo $VERSION
+        test "$VERSION" = "bazel 2.0.0"
 
   unit_tests:
     runs-on: ${{ matrix.os }}
     name: Unit Test
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
     - name: Checkout
