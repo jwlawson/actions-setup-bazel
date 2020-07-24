@@ -28,7 +28,7 @@ jobs:
       run: |
         VERSION=`bazel --version`
         echo $VERSION
-        test "$VERSION" ~= "bazel ${{ matrix.version }}"
+        [[ "$VERSION" ~= "bazel ${{ matrix.version }}" ]]
 
   unit_tests:
     runs-on: ${{ matrix.os }}
