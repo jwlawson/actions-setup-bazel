@@ -9,7 +9,7 @@ describe('When a version is needed', () => {
     nock('https://api.github.com')
       .get('/repos/bazelbuild/bazel/releases')
       .replyWithFile(200, path.join(dataPath, 'releases.json'), {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       });
   });
   afterEach(() => {
@@ -59,12 +59,12 @@ describe('When api token is required', () => {
   beforeEach(() => {
     nock('https://api.github.com', {
       reqheaders: {
-        Authorization: 'token secret_token'
-      }
+        Authorization: 'token secret_token',
+      },
     })
       .get('/repos/bazelbuild/bazel/releases')
       .replyWithFile(200, path.join(dataPath, 'releases.json'), {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       });
     nock('https://api.github.com')
       .get('/repos/bazelbuild/bazel/releases')

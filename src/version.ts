@@ -56,7 +56,7 @@ function convertToVersionInfo(versions: GitHubVersion[]): vi.VersionInfo[] {
         name: a.name,
         platform: extractPlatformFrom(a.name),
         filetype: extractFileTypeFrom(a.name),
-        url: a.browser_download_url
+        url: a.browser_download_url,
       });
     });
     result.push({
@@ -64,7 +64,7 @@ function convertToVersionInfo(versions: GitHubVersion[]): vi.VersionInfo[] {
       url: v.url,
       name: v.name,
       draft: v.draft,
-      prerelease: v.prerelease
+      prerelease: v.prerelease,
     });
   });
   return result;
