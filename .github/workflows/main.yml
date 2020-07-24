@@ -16,7 +16,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
-    - name: Setup bazel
+    - name: Setup bazel (default token)
       uses: ./
       id: setup
       with:
