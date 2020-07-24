@@ -16,10 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Setup bazel
-      uses: jwlawson/actions-setup-bazel@v1.0
+      uses: jwlawson/actions-setup-bazel@v1
       with:
         bazel-version: '2.0.0'
-        github-api-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Use bazel
       run: bazel --version
 ```
@@ -36,9 +35,11 @@ There are two options for the action:
   The [version tests] show some expected values for given versions.
 
 * `github-api-token` is optional, but is used to authenticate with GitHub's
-  API. If not set then no authentication is used to access the API and there is
-  a chance that the test runner will have hit the API rate limit causing the
-  action to fail to download the available versions from GitHub.
+  API. This will default to the generated GitHub token for the pipeline but can
+  be overridden. If set to blank then no authentication is used to access the
+  API and there is a chance that the test runner will have hit the API rate
+  limit causing the action to fail to download the available versions from
+  GitHub.
 
   See also:
    - [GitHub API rate limiting]

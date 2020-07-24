@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        version: [2.0.0, 3.4]
 
     steps:
     - name: Checkout
@@ -20,15 +21,14 @@ jobs:
       uses: ./
       id: setup
       with:
-        bazel-version: '2.0.0'
-        github-api-token: ${{ secrets.GITHUB_TOKEN }}
+        bazel-version: ${{ matrix.version }}
 
     - name: Run bazel --version
       shell: bash
       run: |
         VERSION=`bazel --version`
         echo $VERSION
-        test "$VERSION" = "bazel 2.0.0"
+        [[ "$VERSION" =~ "bazel ${{ matrix.version }}" ]]
 
   unit_tests:
     runs-on: ${{ matrix.os }}
