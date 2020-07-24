@@ -24,24 +24,24 @@ test('Download uses correct platform url', async () => {
         name: 'bazel-darwin-x86_64',
         platform: 'darwin',
         filetype: 'exe',
-        url: 'https://fakeaddress.com/bazel-darwin-x86_64'
+        url: 'https://fakeaddress.com/bazel-darwin-x86_64',
       },
       {
         name: 'bazel-linux-x86_64',
         platform: 'linux',
         filetype: 'exe',
-        url: 'https://fakeaddress.com/bazel-linux-x86_64'
+        url: 'https://fakeaddress.com/bazel-linux-x86_64',
       },
       {
         name: 'bazel-windows-x86_64.exe',
         platform: 'win32',
         filetype: 'exe',
-        url: 'https://fakeaddress.com/bazel-windows-x86_64.exe'
-      }
+        url: 'https://fakeaddress.com/bazel-windows-x86_64.exe',
+      },
     ],
     url: '',
     draft: false,
-    prerelease: false
+    prerelease: false,
   };
   nock.disableNetConnect();
   const darwin_nock = nock('https://fakeaddress.com')
