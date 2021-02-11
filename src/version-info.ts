@@ -4,6 +4,7 @@ export interface AssetInfo {
   platform: string;
   filetype: string;
   url: string;
+  jdk: boolean;
 }
 
 export interface VersionInfo {

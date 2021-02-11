@@ -48,26 +48,28 @@ function extractFileTypeFrom(filename: string): string {
 }
 
 function convertToVersionInfo(versions: GitHubVersion[]): vi.VersionInfo[] {
-  let result = new Array<vi.VersionInfo>();
-  versions.map((v) => {
-    let assets = new Array<vi.AssetInfo>();
-    v.assets.map((a) => {
-      assets.push({
-        name: a.name,
-        platform: extractPlatformFrom(a.name),
-        filetype: extractFileTypeFrom(a.name),
-        url: a.browser_download_url,
-      });
-    });
-    result.push({
+  const results = versions.map((v) => {
+    const assets = v.assets.reduce(
+      (result: vi.AssetInfo[], a: GithubAsset) =>
+        result.concat({
+          name: a.name,
+          platform: extractPlatformFrom(a.name),
+          filetype: extractFileTypeFrom(a.name),
+          url: a.browser_download_url,
+          jdk: !/nojdk/.test(a.name),
+        }),
+      []
+    );
+    const version: vi.VersionInfo = {
       assets: assets,
       url: v.url,
       name: v.name,
       draft: v.draft,
       prerelease: v.prerelease,
-    });
+    };
+    return version;
   });
-  return result;
+  return results;
 }
 
 function getHttpOptions(api_token: string): rest.IRequestOptions {
@@ -105,7 +107,7 @@ export async function getLatestMatching(
   version: string,
   version_list: vi.VersionInfo[]
 ): Promise<vi.VersionInfo> {
-  let matching_versions = version_list
+  const matching_versions = version_list
     .filter((v) => !v.draft && !v.prerelease)
     .filter((v) => semver.satisfies(v.name, version));
   if (matching_versions.length == 0) {
