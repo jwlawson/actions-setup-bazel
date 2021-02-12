@@ -89,3 +89,68 @@ describe('When api token is required', () => {
     );
   });
 });
+
+describe('When providing versions without jdk', () => {
+  const releases = [
+    {
+      name: '4.0.0',
+      assets: [
+        {
+          name: 'bazel-4.0.0-darwin-x86_64',
+          browser_download_url: 'https://url.test/bazel-4.0.0-darwin-x86_64',
+        },
+        {
+          name: 'bazel_nojdk-4.0.0-darwin-x86_64',
+          browser_download_url:
+            'https://url.test/bazel_nojdk-4.0.0-darwin-x86_64',
+        },
+      ],
+    },
+  ];
+
+  beforeEach(() => {
+    nock.disableNetConnect();
+    nock('https://api.github.com')
+      .get('/repos/bazelbuild/bazel/releases')
+      .reply(200, releases);
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
+    nock.enableNetConnect();
+  });
+
+  it('correctly parses the version', async () => {
+    const version_info = await version.getAllVersionInfo();
+    const selected = await version.getLatestMatching('', version_info);
+    expect(selected.name).toMatch(/4.0.0/);
+  });
+
+  it('correctly parses the jdk archive', async () => {
+    const version_info = await version.getAllVersionInfo();
+    const selected = await version.getLatestMatching('', version_info);
+    const assets = selected.assets.filter((a) => a.jdk);
+    expect(assets.length).toBe(1);
+    expect(assets[0]).toEqual({
+      name: 'bazel-4.0.0-darwin-x86_64',
+      platform: 'darwin',
+      filetype: 'exe',
+      url: 'https://url.test/bazel-4.0.0-darwin-x86_64',
+      jdk: true,
+    });
+  });
+
+  it('correctly parses the nojdk archive', async () => {
+    const version_info = await version.getAllVersionInfo();
+    const selected = await version.getLatestMatching('', version_info);
+    const assets = selected.assets.filter((a) => !a.jdk);
+    expect(assets.length).toBe(1);
+    expect(assets[0]).toEqual({
+      name: 'bazel_nojdk-4.0.0-darwin-x86_64',
+      platform: 'darwin',
+      filetype: 'exe',
+      url: 'https://url.test/bazel_nojdk-4.0.0-darwin-x86_64',
+      jdk: false,
+    });
+  });
+});

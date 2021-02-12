@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        version: [2.0.0, 3.4]
+        version: [2.0.0, 3.4, '']
 
     steps:
     - name: Checkout
@@ -46,13 +46,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
-    - name: Install
+    - name: Install node dependencies
       run: npm install
 
-    - name: Format
+    - name: Check `npm run format` has been run
       run: |
         npm run format
         git diff --quiet src/ __tests__/
+
+    - name: Check `npm run package` has been run
+      run: |
+        npm run package
+        git diff --quiet dist/
 
     - name: Run tests
       run: npm test

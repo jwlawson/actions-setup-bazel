@@ -25,18 +25,21 @@ test('Download uses correct platform url', async () => {
         platform: 'darwin',
         filetype: 'exe',
         url: 'https://fakeaddress.com/bazel-darwin-x86_64',
+        jdk: true,
       },
       {
         name: 'bazel-linux-x86_64',
         platform: 'linux',
         filetype: 'exe',
         url: 'https://fakeaddress.com/bazel-linux-x86_64',
+        jdk: true,
       },
       {
         name: 'bazel-windows-x86_64.exe',
         platform: 'win32',
         filetype: 'exe',
         url: 'https://fakeaddress.com/bazel-windows-x86_64.exe',
+        jdk: true,
       },
     ],
     url: '',
@@ -69,6 +72,54 @@ test('Download uses correct platform url', async () => {
     expect(windows_nock.isDone()).toBe(false);
   }
 
+  nock.cleanAll();
+  nock.enableNetConnect();
+});
+
+test('Filters out nojdk version', async () => {
+  const required_version: vi.VersionInfo = {
+    name: '4.0.0',
+    assets: [
+      {
+        name: 'bazel-4.0.0-darwin-x86_64',
+        platform: 'darwin',
+        filetype: 'exe',
+        url: 'https://url.test/bazel-4.0.0-darwin-x86_64',
+        jdk: true,
+      },
+      {
+        name: 'bazel_nojdk-4.0.0-darwin-x86_64',
+        platform: 'darwin',
+        filetype: 'exe',
+        url: 'https://url.test/bazel_nojdk-4.0.0-darwin-x86_64',
+        jdk: false,
+      },
+    ],
+    url: '',
+    draft: false,
+    prerelease: false,
+  };
+  nock.disableNetConnect();
+  const jdk_nock = nock('https://url.test')
+    .get('/bazel-4.0.0-darwin-x86_64')
+    .reply(200, {});
+  const nojdk_nock = nock('https://url.test')
+    .get('/bazel_nojdk-4.0.0-darwin-x86_64')
+    .reply(200, {});
+
+  const orig_platform: string = process.platform;
+  Object.defineProperty(process, 'platform', {
+    value: 'darwin',
+  });
+  expect(process.platform).toBe('darwin');
+
+  await setup.addBazelToToolCache(required_version);
+  expect(jdk_nock.isDone()).toBe(true);
+  expect(nojdk_nock.isDone()).toBe(false);
+
+  Object.defineProperty(process, 'platform', {
+    value: orig_platform,
+  });
   nock.cleanAll();
   nock.enableNetConnect();
 });
