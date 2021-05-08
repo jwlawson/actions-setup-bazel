@@ -1,6 +1,6 @@
 {
   "name": "actions-setup-bazel",
-  "version": "1.4.1",
+  "version": "1.6.1",
   "description": "GitHub action to setup the bazel build tool",
   "main": "index.js",
   "scripts": {
