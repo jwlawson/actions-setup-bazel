@@ -72,24 +72,66 @@ function convertToVersionInfo(versions: GitHubVersion[]): vi.VersionInfo[] {
   return results;
 }
 
-function getHttpOptions(api_token: string): rest.IRequestOptions {
-  if (api_token) {
-    return { additionalHeaders: { Authorization: 'token ' + api_token } };
-  } else {
-    return {};
+function getHttpOptions(
+  api_token: string,
+  page_number: number = 1
+): rest.IRequestOptions {
+  let options: rest.IRequestOptions = {};
+  options.additionalHeaders = { Accept: 'application/vnd.github.v3+json' };
+  if (page_number > 1) {
+    options.queryParameters = { params: { page: page_number } };
   }
+  if (api_token) {
+    options.additionalHeaders.Authorization = 'token ' + api_token;
+  }
+  return options;
+}
+
+// Parse the pagination Link header to get the next url.
+// The header has the form <...url...>; rel="...", <...>; rel="..."
+function getNextFromLink(link: string): string | undefined {
+  const rLink = /<(?<url>[A-Za-z0-9_?=.\/:-]*?)>; rel="(?<rel>\w*?)"/g;
+  let match;
+  while ((match = rLink.exec(link)) != null) {
+    if (match.groups && /next/.test(match.groups.rel)) {
+      return match.groups.url;
+    }
+  }
+  return;
 }
 
 export async function getAllVersionInfo(
   api_token: string = ''
 ): Promise<vi.VersionInfo[]> {
-  const client: rest.RestClient = new rest.RestClient(USER_AGENT);
+  const client = new rest.RestClient(USER_AGENT);
+
+  // Fetch the first page of releases and use that to extract any pagination links.
   const options = getHttpOptions(api_token);
   const version_response = await client.get<GitHubVersion[]>(
     VERSION_URL,
     options
   );
-  const raw_versions: GitHubVersion[] = version_response.result || [];
+  if (version_response.statusCode != 200 || !version_response.result) {
+    return [];
+  }
+  let raw_versions = version_response.result;
+  let headers: { link?: string } = version_response.headers;
+  if (headers.link) {
+    let next = getNextFromLink(headers.link);
+    while (next) {
+      const options = getHttpOptions(api_token);
+      const version_response = await client.get<GitHubVersion[]>(next, options);
+      if (version_response.statusCode != 200 || !version_response.result) {
+        break;
+      }
+      raw_versions = raw_versions.concat(version_response.result);
+      headers = version_response.headers;
+      if (!headers.link) {
+        break;
+      }
+      next = getNextFromLink(headers.link);
+    }
+  }
   const versions: vi.VersionInfo[] = convertToVersionInfo(raw_versions);
   return versions;
 }

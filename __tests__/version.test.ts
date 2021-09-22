@@ -154,3 +154,62 @@ describe('When providing versions without jdk', () => {
     });
   });
 });
+
+describe('When releases are on multiple pages', () => {
+  const page1 = [
+    {
+      name: '2.0.0',
+      assets: [
+        {
+          name: 'bazel-2.0.0-darwin-x86_64',
+          browser_download_url: 'https://url.test/bazel-2.0.0-darwin-x86_64',
+        },
+      ],
+    },
+  ];
+  const page2 = [
+    {
+      name: '1.0.0',
+      assets: [
+        {
+          name: 'bazel-1.0.0-darwin-x86_64',
+          browser_download_url: 'https://url.test/bazel-1.0.0-darwin-x86_64',
+        },
+      ],
+    },
+  ];
+
+  beforeEach(() => {
+    nock.disableNetConnect();
+    nock('https://api.github.com')
+      .get('/repos/bazelbuild/bazel/releases')
+      .reply(200, page1, {
+        Link:
+          '<https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="next", <https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="last"',
+      });
+    nock('https://api.github.com')
+      .get('/repos/bazelbuild/bazel/releases')
+      .query({ page: 2 })
+      .reply(200, page2, {
+        Link:
+          '<https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="first", <https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="prev"',
+      });
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
+    nock.enableNetConnect();
+  });
+
+  it('finds versions on the first page', async () => {
+    const version_info = await version.getAllVersionInfo();
+    const selected = await version.getLatestMatching('2.x', version_info);
+    expect(selected.name).toMatch(/2.0.0/);
+  });
+
+  it('finds versions on the second page', async () => {
+    const version_info = await version.getAllVersionInfo();
+    const selected = await version.getLatestMatching('1.x', version_info);
+    expect(selected.name).toMatch(/1.0.0/);
+  });
+});
