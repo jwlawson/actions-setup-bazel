@@ -26,6 +26,7 @@ test('Download uses correct platform url', async () => {
         filetype: 'exe',
         url: 'https://fakeaddress.com/bazel-darwin-x86_64',
         jdk: true,
+        arch: 'x86_64',
       },
       {
         name: 'bazel-linux-x86_64',
@@ -33,6 +34,7 @@ test('Download uses correct platform url', async () => {
         filetype: 'exe',
         url: 'https://fakeaddress.com/bazel-linux-x86_64',
         jdk: true,
+        arch: 'x86_64',
       },
       {
         name: 'bazel-windows-x86_64.exe',
@@ -40,6 +42,7 @@ test('Download uses correct platform url', async () => {
         filetype: 'exe',
         url: 'https://fakeaddress.com/bazel-windows-x86_64.exe',
         jdk: true,
+        arch: 'x86_64',
       },
     ],
     url: '',
@@ -86,6 +89,7 @@ test('Filters out nojdk version', async () => {
         filetype: 'exe',
         url: 'https://url.test/bazel-4.0.0-darwin-x86_64',
         jdk: true,
+        arch: 'x86_64',
       },
       {
         name: 'bazel_nojdk-4.0.0-darwin-x86_64',
@@ -93,6 +97,7 @@ test('Filters out nojdk version', async () => {
         filetype: 'exe',
         url: 'https://url.test/bazel_nojdk-4.0.0-darwin-x86_64',
         jdk: false,
+        arch: 'x86_64',
       },
     ],
     url: '',
@@ -116,6 +121,56 @@ test('Filters out nojdk version', async () => {
   await setup.addBazelToToolCache(required_version);
   expect(jdk_nock.isDone()).toBe(true);
   expect(nojdk_nock.isDone()).toBe(false);
+
+  Object.defineProperty(process, 'platform', {
+    value: orig_platform,
+  });
+  nock.cleanAll();
+  nock.enableNetConnect();
+});
+
+test('Architecture is considered when choosing asset', async () => {
+  const required_version: vi.VersionInfo = {
+    name: '4.0.0',
+    assets: [
+      {
+        name: 'bazel-4.0.0-darwin-x86_64',
+        platform: 'darwin',
+        filetype: 'exe',
+        url: 'https://url.test/bazel-4.0.0-darwin-x86_64',
+        jdk: true,
+        arch: 'x86_64',
+      },
+      {
+        name: 'bazel-4.0.0-darwin-arm64',
+        platform: 'darwin',
+        filetype: 'exe',
+        url: 'https://url.test/bazel-4.0.0-darwin-arm64',
+        jdk: false,
+        arch: 'arm64',
+      },
+    ],
+    url: '',
+    draft: false,
+    prerelease: false,
+  };
+  nock.disableNetConnect();
+  const x86_nock = nock('https://url.test')
+    .get('/bazel-4.0.0-darwin-x86_64')
+    .reply(200, {});
+  const arm_nock = nock('https://url.test')
+    .get('/bazel-4.0.0-darwin-arm64')
+    .reply(200, {});
+
+  const orig_platform: string = process.platform;
+  Object.defineProperty(process, 'platform', {
+    value: 'darwin',
+  });
+  expect(process.platform).toBe('darwin');
+
+  await setup.addBazelToToolCache(required_version);
+  expect(x86_nock.isDone()).toBe(true);
+  expect(arm_nock.isDone()).toBe(false);
 
   Object.defineProperty(process, 'platform', {
     value: orig_platform,

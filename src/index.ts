@@ -13,7 +13,7 @@ async function run() {
     );
     await setup.addBazelToPath(bazel_version_info);
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed((error as Error).message);
   }
 }
 run();

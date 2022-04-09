@@ -9,7 +9,11 @@ const PACKAGE_NAME: string = 'bazel';
 
 function getURL(version: vi.VersionInfo): string {
   const matching_assets: vi.AssetInfo[] = version.assets.filter(
-    (a) => a.platform === process.platform && a.filetype === 'exe' && a.jdk
+    (a) =>
+      a.platform === process.platform &&
+      a.filetype === 'exe' &&
+      a.jdk &&
+      a.arch === 'x86_64'
   );
   const num_found = matching_assets.length;
   if (num_found == 0) {

@@ -5,6 +5,7 @@ export interface AssetInfo {
   filetype: string;
   url: string;
   jdk: boolean;
+  arch: string;
 }
 
 export interface VersionInfo {
