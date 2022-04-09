@@ -47,6 +47,16 @@ function extractFileTypeFrom(filename: string): string {
   }
 }
 
+function extractArchFrom(filename: string): string {
+  if (filename.includes('x86_64')) {
+    return 'x86_64';
+  } else if (filename.includes('arm64')) {
+    return 'arm64';
+  } else {
+    return '';
+  }
+}
+
 function convertToVersionInfo(versions: GitHubVersion[]): vi.VersionInfo[] {
   const results = versions.map((v) => {
     const assets = v.assets.reduce(
@@ -57,6 +67,7 @@ function convertToVersionInfo(versions: GitHubVersion[]): vi.VersionInfo[] {
           filetype: extractFileTypeFrom(a.name),
           url: a.browser_download_url,
           jdk: !/nojdk/.test(a.name),
+          arch: extractArchFrom(a.name),
         }),
       []
     );

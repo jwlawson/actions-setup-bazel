@@ -137,6 +137,7 @@ describe('When providing versions without jdk', () => {
       filetype: 'exe',
       url: 'https://url.test/bazel-4.0.0-darwin-x86_64',
       jdk: true,
+      arch: 'x86_64',
     });
   });
 
@@ -151,6 +152,7 @@ describe('When providing versions without jdk', () => {
       filetype: 'exe',
       url: 'https://url.test/bazel_nojdk-4.0.0-darwin-x86_64',
       jdk: false,
+      arch: 'x86_64',
     });
   });
 });
@@ -184,15 +186,13 @@ describe('When releases are on multiple pages', () => {
     nock('https://api.github.com')
       .get('/repos/bazelbuild/bazel/releases')
       .reply(200, page1, {
-        Link:
-          '<https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="next", <https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="last"',
+        Link: '<https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="next", <https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="last"',
       });
     nock('https://api.github.com')
       .get('/repos/bazelbuild/bazel/releases')
       .query({ page: 2 })
       .reply(200, page2, {
-        Link:
-          '<https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="first", <https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="prev"',
+        Link: '<https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="first", <https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="prev"',
       });
   });
 
@@ -211,5 +211,46 @@ describe('When releases are on multiple pages', () => {
     const version_info = await version.getAllVersionInfo();
     const selected = await version.getLatestMatching('1.x', version_info);
     expect(selected.name).toMatch(/1.0.0/);
+  });
+});
+
+describe('When given two releases with different architectures', () => {
+  const releases = [
+    {
+      name: '5.1.1',
+      assets: [
+        {
+          name: 'bazel-5.1.1-windows-x86_64.exe',
+          browser_download_url:
+            'https://url.test/bazel-5.1.1-windows-x86_64.exe',
+        },
+        {
+          name: 'bazel-5.1.1-windows-arm64.exe',
+          browser_download_url:
+            'https://url.test/bazel-5.1.1-windows-arm64.exe',
+        },
+      ],
+    },
+  ];
+
+  beforeEach(() => {
+    nock.disableNetConnect();
+    nock('https://api.github.com')
+      .get('/repos/bazelbuild/bazel/releases')
+      .reply(200, releases);
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
+    nock.enableNetConnect();
+  });
+
+  it('finds one asset for x86, one for arm', async () => {
+    const version_info = await version.getAllVersionInfo();
+    const selected = await version.getLatestMatching('5.x', version_info);
+    const x86_assets = selected.assets.filter((a) => a.arch === 'x86_64');
+    expect(x86_assets.length).toBe(1);
+    const arm_assets = selected.assets.filter((a) => a.arch === 'arm64');
+    expect(arm_assets.length).toBe(1);
   });
 });
