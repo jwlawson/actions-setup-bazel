@@ -32,6 +32,8 @@ There are two options for the action:
   version `1.2.x`. By default it is empty which will give the latest bazel
   version available on GitHub.
 
+  The version can also be `latest` to get the latest version of bazel on GitHub.
+
   The [version tests] show some expected values for given versions.
 
 * `github-api-token` is optional, but is used to authenticate with GitHub's

@@ -1,0 +1,27 @@
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  latest_version:
+    runs-on: ${{ matrix.os }}
+    name: Test latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup bazel
+      uses: ./
+      id: setup
+      with:
+        bazel-version: 'latest'
+
+    - name: Run bazel --version
+      shell: bash
+      run: |
+        VERSION=`bazel --version`
+        echo $VERSION
