@@ -186,15 +186,13 @@ describe('When releases are on multiple pages', () => {
     nock('https://api.github.com')
       .get('/repos/bazelbuild/bazel/releases')
       .reply(200, page1, {
-        Link:
-          '<https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="next", <https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="last"',
+        Link: '<https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="next", <https://api.github.com/repos/bazelbuild/bazel/releases?page=2>; rel="last"',
       });
     nock('https://api.github.com')
       .get('/repos/bazelbuild/bazel/releases')
       .query({ page: 2 })
       .reply(200, page2, {
-        Link:
-          '<https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="first", <https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="prev"',
+        Link: '<https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="first", <https://api.github.com/repos/bazelbuild/bazel/releases?page=1>; rel="prev"',
       });
   });
 
