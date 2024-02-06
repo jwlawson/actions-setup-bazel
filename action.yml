@@ -8,5 +8,5 @@ inputs:
     description: 'Authentication token to use when connecting to the GitHub API'
     default: '${{ github.token }}'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
