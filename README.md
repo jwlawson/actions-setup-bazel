@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Setup bazel
-      uses: jwlawson/actions-setup-bazel@v1
+      uses: jwlawson/actions-setup-bazel@v2
       with:
         bazel-version: '2.0.0'
     - name: Use bazel
